@@ -24,7 +24,7 @@ function main()
     setupEvents(client);
     setupCommands(client);
 
-    //client.on(Events.MessageCreate, (m) => { m.client.channels.cache.get().s})
+    //client.on(Events.MessageCreate, (m) => { m.react()})
     
     client.login(process.env.DISCORD_TOKEN);
 }

@@ -16,5 +16,15 @@ module.exports = {
             member.roles.remove(roles.get(roleIDs[reaction.emoji.name]));
             console.log(`[Events | messageReactionRemove] Removing "${roles.get(roleIDs[reaction.emoji.name]).name}" from ${user.username} (${user.id})`);
         }
+        else if (reaction.emoji.name === "✅" && reaction.message.id === "1146607622980636803")
+        {
+            const guild = await reaction.client.guilds.fetch(process.env.GUILD_ID);
+            const roles = guild.roles.cache;
+            const member = await guild.members.fetch(user.id);
+
+            member.roles.remove(roles.get("1100471938951946380"));
+
+            console.log(`[Events | messageReactionRemove] Removing "${roles.get("1100471938951946380").name}" to ${user.username} (${user.id})`);
+        }
     }
 }

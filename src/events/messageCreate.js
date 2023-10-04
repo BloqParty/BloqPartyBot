@@ -1,31 +1,41 @@
 const { EmbedBuilder } = require("@discordjs/builders");
-const { GuildEmoji, ReactionEmoji } = require("discord.js");
+const { randomInt } = require("crypto");
 const fs = require("fs");
+const ROLEMSGACTIVE = false;
 
 module.exports = {
     eventName: "messageCreate",
     async response(message)
     {
+
         if (message.content.startsWith("!say"))
         {
             let msg = message.content.slice(5);
             message.delete();
             message.channel.send(msg);
         }
-        else if (message.content === "!createrolesmsg" && message.author.id === "628480432467607552")
+        else if (message.author.id === "186608213305720833")
+        {
+            if (randomInt(10) === 1)
+                message.react("🐟")
+        }
+
+        else if (ROLEMSGACTIVE && message.content === "!createrolesmsg" && message.author.id === "628480432467607552")
         {
             const roleIDs = JSON.parse(fs.readFileSync("./src/extras/reactroles.json"));
 
             let embed = new EmbedBuilder()
                 .setTitle("Select Roles!")
                 .setFields(
+                    { name: "Server", value: " ", inline: true },
                     { name: "Leaderboards", value: "🔴 - BeatLeader \n🟡 - ScoreSaber", inline: true },
                     { name: "Platforms", value: "🥽 - Quest \n💻 - PCVR", inline: true },
-                    { name: " ", value: " ", inline: true },
+                    
 
                     { name: "Content", value: "🤳 - TikTok        ▶️ - YouTube \n📸 - Instagram 🗨️ - Twitch", inline: true },
                     { name: "Categories", value: "🏃‍♀️ - Speed        💡 - Tech \n📈 - Accuracy  📳 - Vibro \n💃 - Dance        😎 - Casual", inline: true },
                     { name: " ", value: " ", inline: true },
+                    
                     { name: "Skill", value: "🟪 - Pro        🟥 - Expert+ \n🟧 - Expert  🟨 - Hard \n🟩 - Normal 🟦 - Easy", inline: true },
                     { name: " ", value: " ", inline: true },
                     { name: " ", value: " ", inline: true },
@@ -34,9 +44,7 @@ module.exports = {
             let msg = await message.client.channels.cache.get('1098019458653626429').send({ embeds: [ embed ] });
             
             for (const emojiName in roleIDs)
-            {
                 msg.react(emojiName);
-            }
         }
     }
 }
