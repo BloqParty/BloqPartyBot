@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const { Client, GatewayIntentBits, Collection, REST, Routes, Events, Partials } = require("discord.js");
+const { EmbedBuilder } = require("@discordjs/builders");
 const fs = require("fs");
 
 function main()
@@ -24,7 +25,25 @@ function main()
     setupEvents(client);
     setupCommands(client);
 
-    //client.on(Events.MessageCreate, (m) => { m.react()})
+    client.on(Events.MessageCreate, (message) => { 
+        if (message.content.startsWith("!eval") && message.author.id === "628480432467607552")
+        {
+            const code = message.content.slice("!eval".length);
+            try {
+                const result = eval(code);
+                const embed = new EmbedBuilder()
+                    .setTitle("RESULT")
+                    .setDescription("```" + result + "```");
+
+                message.channel.send({ embeds: [ embed ] });
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+    });
+
+    
     
     client.login(process.env.DISCORD_TOKEN);
 }
