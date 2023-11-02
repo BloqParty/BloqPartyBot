@@ -7,6 +7,8 @@ module.exports = {
     eventName: "messageCreate",
     async response(message)
     {
+        if (message.author.bot) 
+            return;
 
         if (message.content.startsWith("!say"))
         {
@@ -14,6 +16,7 @@ module.exports = {
             message.delete();
             message.channel.send(msg);
         }
+
         else if (message.author.id === "186608213305720833")
         {
             if (randomInt(10) === 1)
@@ -45,6 +48,14 @@ module.exports = {
             
             for (const emojiName in roleIDs)
                 msg.react(emojiName);
+        }
+        else if (message.content.length > 20000 && message.author.id === "628480432467607552")
+        {
+            const msg = await message.channel.send("React to any of these to get the colour role of choice");
+            const roleIDs = JSON.parse(fs.readFileSync("./src/extras/colourroles.json"));
+            for (const emojiName in roleIDs)
+                msg.react(message.client.guilds.cache.get("1169158846690902136").emojis.cache.get(emojiName));
+            
         }
     }
 }
