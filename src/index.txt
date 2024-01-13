@@ -3,27 +3,14 @@ require("dotenv").config();
 const { Client, GatewayIntentBits, Collection, REST, Routes, Events, Partials } = require("discord.js");
 const { EmbedBuilder } = require("@discordjs/builders");
 const fs = require("fs");
+const client = import("./client");
 
 function main()
 {
-    const client = new Client({
-        intents: [ 
-            GatewayIntentBits.Guilds,
-            GatewayIntentBits.GuildMembers,
-            GatewayIntentBits.GuildMessages,
-            GatewayIntentBits.MessageContent,
-            GatewayIntentBits.GuildMessageReactions,
-            GatewayIntentBits.DirectMessages
-        ],
-        partials: [
-            Partials.Message,
-            Partials.Channel,
-            Partials.Reaction
-        ],
-    });
 
     setupEvents(client);
     setupCommands(client);
+
 
     client.on(Events.MessageCreate, (message) => { 
         if (message.content.startsWith("!eval") && message.author.id === "628480432467607552")
