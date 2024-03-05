@@ -15,4 +15,13 @@ fs.readdirSync("./events")
     }
 )
 
+fs.readdirSync("./events/commands")
+    .filter(x => x.endsWith(".js"))
+    .forEach(file => {
+        const command = require("../events/commands/" + file);
+        if (command.init)
+            command.init();
+    }
+)
+
 client.login(process.env.TOKEN);
