@@ -1,8 +1,7 @@
-const { Message, Events } = require("discord.js");
-const { client } = require("../src/client");
-const { isMessageInFilter, addPhraseToFilter, removePhraseFromFilter } = require("../eventFunctions/messageFilter");
+const { Events } = require("discord.js");
+const { isMessageInFilter } = require("./functions/filter");
 
-
+let commands = [];
 module.exports = {
     eventName: Events.MessageCreate,
     async execute(message)
@@ -10,13 +9,13 @@ module.exports = {
         if (message.author.bot)
             return;
 
-        if (message.content.startsWith("!filter add"))
-            if (message.member.roles.resolveId(process.env.MOD_ROLE) || message.member.roles.resolveId(process.env.ADMIN_ROLE))
-                return message.channel.send(addPhraseToFilter(message.content.slice(12)) ? "Added `" + message.content.slice(12) + "` to the filter" : "Phrase is already on the filter");
-
-        if (message.content.startsWith("!filter remove"))
-            if (message.member.roles.resolveId(process.env.MOD_ROLE) || message.member.roles.resolveId(process.env.ADMIN_ROLE))
-                return message.channel.send(removePhraseFromFilter(message.content.slice(15)) ? "Removed `" + message.content.slice(15) + "` from the filter" : "Phrase wasn't on the filter");
+        commands.forEach(({ activation, funct }) => {
+            if (message.content.startsWith(activation))
+            {
+                if (funct(message) === true)
+                    return;
+            }
+        })
 
         if (await isMessageInFilter(message) === false)
             return;
@@ -52,5 +51,15 @@ module.exports = {
                 console.log(a);
             }
         }*/
+    },
+    
+    addCommand(activation, func)
+    {
+        if (typeof activation === "string" && typeof func === "function")
+        {
+            function funct(message) { return func(message); }
+            commands.push({ activation, funct });
+            console.log(`[Events | ${Events.MessageCreate}] Attached command ${func.name} to ${Events.MessageCreate}`);
+        }
     }
 }
