@@ -24,7 +24,7 @@ async function removeFromFilter(message)
 module.exports = {
     init()
     {
-        addCommand("!filter add", addToFilter);
-        addCommand("!filter remove", removeFromFilter);
+        addCommand("!filter add", addToFilter, false);
+        addCommand("!filter remove", removeFromFilter, false);
     }
 }

@@ -1,6 +1,8 @@
 const { Events } = require("discord.js");
 const { isMessageInFilter } = require("./functions/filter");
 
+let exit = false;
+let preCommands = [];
 let commands = [];
 module.exports = {
     eventName: Events.MessageCreate,
@@ -9,16 +11,30 @@ module.exports = {
         if (message.author.bot)
             return;
 
+        preCommands.forEach(({ activation, funct }) => {
+            if (message.content.startsWith(activation))
+            {
+                if (funct(message) === true)
+                    exit = true;
+            }
+        });
+
+        if (exit)
+        {
+            exit = false;
+            return;
+        }
+
+        if (await isMessageInFilter(message) === false)
+            return;
+
         commands.forEach(({ activation, funct }) => {
             if (message.content.startsWith(activation))
             {
                 if (funct(message) === true)
                     return;
             }
-        })
-
-        if (await isMessageInFilter(message) === false)
-            return;
+        });
         /*if (message.content.startsWith("!createmacro"))
         {
             const msg = String(message.content.slice(13));
@@ -53,13 +69,13 @@ module.exports = {
         }*/
     },
     
-    addCommand(activation, func)
+    addCommand(activation, func, afterFilter)
     {
-        if (typeof activation === "string" && typeof func === "function")
+        if (typeof activation === "string" && typeof func === "function" && typeof afterFilter === "boolean")
         {
             function funct(message) { return func(message); }
-            commands.push({ activation, funct });
-            console.log(`[Events | ${Events.MessageCreate}] Attached command ${func.name} to ${Events.MessageCreate}`);
+            afterFilter ? commands.push({ activation, funct }) : preCommands.push({ activation, funct });
+            console.log(`[Events | ${Events.MessageCreate}] Attached command ${func.name} to ${Events.MessageCreate} ${afterFilter ? "after" : "before"} the filter`);
         }
     }
 }
