@@ -4,15 +4,10 @@ const fs = require("fs");
 module.exports = {
     async isMessageInFilter(message)
     {
-        console.log("running")
-        const filter = String(fs.readFileSync("./data/messageFilter.txt")).split('\\n');
-        console.log("filter: " + filter);
-        console.log("message: " + message.content);
+        const filter = fs.readFileSync("./data/messageFilter.txt").toString().split('\\n');
 
         for (let line of filter)
         {
-            console.log(line);
-            console.log(message.content.includes(line));
             if (message.content.includes(line) && line.length > 1)
             {
                 message.delete();
@@ -26,7 +21,8 @@ module.exports = {
                     .setTitle(`Filtered message`)
                     .addFields(
                         { name: "__**Channel:**__", value: `<#${message.channelId}> \`${message.channelId}\``, inline: true },
-                        { name: "__**User:**__", value: `<@${message.author.id}> \`${message.author.username}\` \`${message.author.id}\`}`, inline: true }
+                        { name: "__**User:**__", value: `<@${message.author.id}> \`${message.author.username}\` (\`${message.author.id}\`)`, inline: true },
+                        { name: "__**Filtered Content:**__", value: `\`${line}\``, inline: true }
                     )
                     .setColor(0xff0000);
                 for (let i = 0; i < messages.length; i++)
@@ -55,8 +51,7 @@ module.exports = {
         let file = fs.readFileSync("./data/messageFilter.txt");
         if (file.includes(content))
         {
-            file -= "\\n" + content;
-            fs.writeFileSync("./data/messageFilter.txt", file);
+            fs.writeFileSync("./data/messageFilter.txt", file.toString().replace("\\n" + content, ""));
             return true;
         }
         return false;
