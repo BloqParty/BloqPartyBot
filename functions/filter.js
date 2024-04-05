@@ -1,10 +1,11 @@
 const { EmbedBuilder } = require("discord.js");
+const os = require("os");
 const fs = require("fs");
 
 module.exports = {
     async isMessageInFilter(message)
     {
-        const filter = fs.readFileSync("./data/messageFilter.txt").toString().split('\\n');
+        const filter = fs.readFileSync("./data/messageFilter.txt").toString().split(os.EOL);
 
         for (let line of filter)
         {
@@ -39,7 +40,7 @@ module.exports = {
         let file = fs.readFileSync("./data/messageFilter.txt");
         if (!file.includes(content))
         {
-            file += "\\n" + content;
+            file += os.EOL + content;
             fs.writeFileSync("./data/messageFilter.txt", file);
             return true;
         }
@@ -48,12 +49,10 @@ module.exports = {
 
     async removePhraseFromFilter(content)
     {
-        let file = fs.readFileSync("./data/messageFilter.txt");
-        if (file.includes(content))
-        {
-            fs.writeFileSync("./data/messageFilter.txt", file.toString().replace("\\n" + content, ""));
-            return true;
-        }
-        return false;
+        let file = fs.readFileSync("./data/messageFilter.txt", "utf-8");
+        let regex = new RegExp("^.*" + content + ".*$", "gm");
+        file = file.replace(regex, "").trim();
+        fs.writeFileSync("./data/messageFilter.txt", file);
+        return true;
     }
 }
