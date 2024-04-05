@@ -1,7 +1,5 @@
 const { registerCommand } = require("../events/messageCreate");
-const { GetPrisma } = require("../src/prisma");
 const { Message } = require("discord.js");
-const client = require("../src/client");
 
 /**
  * 
