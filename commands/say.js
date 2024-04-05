@@ -6,7 +6,7 @@ const client = require("../src/client");
 /**
  * 
  * @param { Message<boolean> } message 
- * @returns { { "roleId": string, "emojiId": string, "messageId": string} | null }
+ * @returns { null }
  */
 async function sayMessage(message)
 {
