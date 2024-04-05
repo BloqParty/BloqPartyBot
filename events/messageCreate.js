@@ -1,8 +1,6 @@
 const { Events } = require("discord.js");
-const { isMessageInFilter } = require("./functions/filter");
+const { isMessageInFilter, addPhraseToFilter, removePhraseFromFilter } = require("../functions/filter");
 
-let exit = false;
-let preCommands = [];
 let commands = [];
 module.exports = {
     eventName: Events.MessageCreate,
@@ -11,30 +9,27 @@ module.exports = {
         if (message.author.bot)
             return;
 
-        preCommands.forEach(({ activation, funct }) => {
-            if (message.content.startsWith(activation))
-            {
-                if (funct(message) === true)
-                    exit = true;
-            }
-        });
+        if (message.content.startsWith("!filter add") && (message.member.roles.resolveId(process.env.MOD_ROLE) || message.member.roles.resolveId(process.env.ADMIN_ROLE)))
+            return message.channel.send(addPhraseToFilter(message.content.slice(12)) ? "Added `" + message.content.slice(12) + "` to the filter" : "Phrase is already on the filter");
+        
+        if (message.content.startsWith("!filter remove") && (message.member.roles.resolveId(process.env.MOD_ROLE) || message.member.roles.resolveId(process.env.ADMIN_ROLE)))
+            return message.channel.send(removePhraseFromFilter(message.content.slice(15)) ? "Removed `" + message.content.slice(15) + "` from the filter" : "Phrase wasn't on the filter");
 
-        if (exit)
-        {
-            exit = false;
-            return;
-        }
 
         if (await isMessageInFilter(message) === false)
             return;
 
-        commands.forEach(({ activation, funct }) => {
-            if (message.content.startsWith(activation))
-            {
-                if (funct(message) === true)
-                    return;
-            }
-        });
+        if (commands.length > 0)
+        {
+            commands.forEach(({ activation, funct }) => {
+                if (message.content.startsWith(activation))
+                {
+                    if (funct(message) === true)
+                        return;
+                }
+            });
+        }
+        
         /*if (message.content.startsWith("!createmacro"))
         {
             const msg = String(message.content.slice(13));
@@ -69,13 +64,13 @@ module.exports = {
         }*/
     },
     
-    addCommand(activation, func, afterFilter)
+    registerCommand(activation, func)
     {
-        if (typeof activation === "string" && typeof func === "function" && typeof afterFilter === "boolean")
+        if (typeof activation === "string" && typeof func === "function" )
         {
             function funct(message) { return func(message); }
-            afterFilter ? commands.push({ activation, funct }) : preCommands.push({ activation, funct });
-            console.log(`[Events | ${Events.MessageCreate}] Attached command ${func.name} to ${Events.MessageCreate} ${afterFilter ? "after" : "before"} the filter`);
+            commands.push({ activation, funct });
+            console.log(`[Events | ${Events.MessageCreate}] Attached command ${func.name} to ${Events.MessageCreate}`);
         }
     }
 }
