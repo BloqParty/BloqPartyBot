@@ -20,3 +20,10 @@ model macro {
   description     String? 
   url             String?
 }
+
+model reactRole {
+  channelId   String  
+  messageId   String
+  roleId      String  @unique
+  emojiId     String
+}
