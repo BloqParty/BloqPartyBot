@@ -1,17 +1,20 @@
 {
-  "name": "bedroompartybot",
+  "name": "bloqpartybot",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prisma-gen": "npx prisma migrate dev --name init"
   },
+  "keywords": [],
   "author": "",
   "license": "ISC",
+  "devDependencies": {
+    "prisma": "^5.12.1"
+  },
   "dependencies": {
-    "@discordjs/builders": "^1.6.5",
-    "discord.js": "^14.13.0",
-    "dotenv": "^16.3.1",
-    "node-fetch": "^3.3.2"
+    "@prisma/client": "^5.12.1",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.2"
   }
 }
