@@ -1,6 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 
-let prisma = undefined;
+let prisma = new PrismaClient();
 module.exports = {
     GetPrisma()
     {
